@@ -2,6 +2,10 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import String
+import List
+import Char
+import Regex
 
 
 model =
@@ -22,17 +26,34 @@ main =
                 ]
     in
         div [ class "content" ]
-            [ text "TODO put the contents of elmHubHeader here instead of this text!"
+            [ elmHubHeader
             , ul [ class "results" ]
                 [ li []
-                    [ span [ class "star-count" ]
-                        [-- TODO display the number of stars here.
-                         --
-                         -- HINT: You'll need some parentheses to do this!
-                        ]
-                      -- TODO use the model to put a link here that points to
-                      -- https://github.com/TheSeamau5/elm-checkerboardgrid-tutorial
-                      -- by prepending the "https://github.com/" part.
+                    [ span [ class "star-count" ] [ text (toString model.result.stars) ]
+                    , a [ href "https://github.com/" ] [ text (formatName model.result.name) ]
                     ]
                 ]
             ]
+
+
+formatName : String -> String
+formatName name =
+    removePrefix name
+        |> String.split "-"
+        |> List.map capitalize
+        |> String.join " "
+
+
+removePrefix : String -> String
+removePrefix =
+    Regex.replace Regex.All (Regex.regex "^[^\\/]*\\/") (\_ -> "")
+
+
+capitalize : String -> String
+capitalize string =
+    case String.uncons string of
+        Nothing ->
+            ""
+
+        Just ( head, tail ) ->
+            String.cons (Char.toUpper head) tail
